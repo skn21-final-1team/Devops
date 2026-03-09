@@ -24,6 +24,7 @@ ARG QUANTIZATION=""
 ARG MODEL_REVISION=""
 ARG TOKENIZER_REVISION=""
 ARG VLLM_NIGHTLY="false"
+ARG HF_TOKEN=""
 
 ENV MODEL_NAME=$MODEL_NAME \
     MODEL_REVISION=$MODEL_REVISION \
@@ -31,6 +32,7 @@ ENV MODEL_NAME=$MODEL_NAME \
     TOKENIZER_REVISION=$TOKENIZER_REVISION \
     BASE_PATH=$BASE_PATH \
     QUANTIZATION=$QUANTIZATION \
+    HF_TOKEN=$HF_TOKEN \
     HF_DATASETS_CACHE="${BASE_PATH}/huggingface-cache/datasets" \
     HUGGINGFACE_HUB_CACHE="${BASE_PATH}/huggingface-cache/hub" \
     HF_HOME="${BASE_PATH}/huggingface-cache/hub" \
@@ -60,11 +62,9 @@ fi
 
 COPY src /src
 RUN --mount=type=secret,id=HF_TOKEN,required=false \
-    if [ -f /run/secrets/HF_TOKEN ]; then \
-    export HF_TOKEN=$(cat /run/secrets/HF_TOKEN); \
-    fi && \
+    export HF_TOKEN="${HF_TOKEN:-$(cat /run/secrets/HF_TOKEN 2>/dev/null || echo '')}" && \
     if [ -n "$MODEL_NAME" ]; then \
-    python3 /src/download_model.py; \
+        python3 /src/download_model.py; \
     fi
 
 # Start the handler
