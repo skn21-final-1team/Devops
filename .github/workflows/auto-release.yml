@@ -1,0 +1,19 @@
+name: Auto Release on Push
+
+on:
+  push:
+    branches: [post-preprocessing]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: "Auto Release #${{ github.run_number }}"
+          draft: false
+          prerelease: false
