@@ -16,7 +16,7 @@ COPY requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     python3 -m pip install --upgrade -r /requirements.txt
 
-# Setup for Option 2: Building the Image with the Model included
+# Runtime model configuration (model download happens at worker startup)
 ARG MODEL_NAME="meta-llama/Llama-3.1-8B-Instruct"
 ARG TOKENIZER_NAME=""
 ARG BASE_PATH="/runpod-volume"
@@ -59,12 +59,6 @@ RUN if [ "${VLLM_NIGHTLY}" = "true" ]; then \
 fi
 
 COPY src /src
-ARG HF_TOKEN
-RUN --mount=type=secret,id=HF_TOKEN,required=false \
-    export HF_TOKEN="${HF_TOKEN:-$(cat /run/secrets/HF_TOKEN 2>/dev/null || echo '')}" && \
-    if [ -n "$MODEL_NAME" ]; then \
-        python3 /src/download_model.py; \
-    fi
 
 # Start the handler
 CMD ["python3", "/src/handler.py"]
