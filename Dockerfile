@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     python3 -m pip install --upgrade -r /requirements.txt
 
 # Setup for Option 2: Building the Image with the Model included
-ARG MODEL_NAME=""
+ARG MODEL_NAME="meta-llama/Llama-3.1-8B-Instruct"
 ARG TOKENIZER_NAME=""
 ARG BASE_PATH="/runpod-volume"
 ARG QUANTIZATION=""
@@ -41,7 +41,14 @@ ENV MODEL_NAME=$MODEL_NAME \
     # Prevent rayon thread pool panic in containers where ulimit -u < nproc
     # (tokenizers uses Rust's rayon which tries to spawn threads = CPU cores)
     TOKENIZERS_PARALLELISM=false \
-    RAYON_NUM_THREADS=4
+    RAYON_NUM_THREADS=4 \
+    # vLLM settings (RTX 5090 32GB optimized for 7B-13B models)
+    GPU_MEMORY_UTILIZATION=0.92 \
+    MAX_MODEL_LEN=8192 \
+    MAX_NUM_BATCHED_TOKENS=8192 \
+    MAX_NUM_SEQS=128 \
+    DEFAULT_BATCH_SIZE=64 \
+    MAX_CONCURRENCY=50
 
 ENV PYTHONPATH="/:/vllm-workspace"
 
