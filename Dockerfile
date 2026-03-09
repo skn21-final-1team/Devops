@@ -42,7 +42,7 @@ ENV MODEL_NAME=$MODEL_NAME \
     # (tokenizers uses Rust's rayon which tries to spawn threads = CPU cores)
     TOKENIZERS_PARALLELISM=false \
     RAYON_NUM_THREADS=4 \
-    # vLLM settings (RTX 5090 32GB optimized for 7B-13B models)
+    # vLLM settings (RTX 5090 32GB optimized for meta-llama/Llama-3.1-8B-Instruct models)
     GPU_MEMORY_UTILIZATION=0.92 \
     MAX_MODEL_LEN=8192 \
     MAX_NUM_BATCHED_TOKENS=8192 \
