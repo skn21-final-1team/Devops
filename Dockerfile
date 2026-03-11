@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY handler.py engine.py utils.py download_model.py test_input.json ./
 
 # Setup for Option 2: Building the Image with the Model included
-ARG MODEL_NAME=""
+ARG MODEL_NAME="LGAI-EXAONE/EXAONE-4.0-32B"
 ARG TOKENIZER_NAME=""
 ARG BASE_PATH="/runpod-volume"
 ARG QUANTIZATION=""
