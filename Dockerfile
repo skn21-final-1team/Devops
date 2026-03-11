@@ -15,7 +15,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # copy source files
 COPY handler.py engine.py utils.py download_model.py test_input.json ./
-COPY public/ ./public/
 
 # Setup for Option 2: Building the Image with the Model included
 ARG MODEL_NAME=""
