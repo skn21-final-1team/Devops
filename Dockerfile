@@ -15,12 +15,12 @@ RUN apt-get update && apt-get install -y \
 # install uv
 RUN pip install uv
 
+# install torch (stable CUDA 12.4 index)
+RUN pip install torch==2.5.1+cu124 --index-url https://download.pytorch.org/whl/cu124
+
 # install python dependencies
 COPY requirements.txt /requirements.txt
 RUN uv pip install -r /requirements.txt --system
-
-# install torch
-RUN pip install torch==2.5.1+cu124 --index-url https://download.pytorch.org/whl/test/cu124 --no-cache-dir
 
 # Add src files
 ADD src .
