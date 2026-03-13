@@ -26,24 +26,24 @@ async def async_generator_handler(job: dict[str, Any]):
             if openai_route and openai_route == "/v1/embeddings":
                 model_name = openai_input.get("model")
                 if not openai_input:
-                    return create_error_response("Missing input").model_dump()
+                    return create_error_response("Missing input")
                 if not model_name:
                     return create_error_response(
                         "Did not specify model in openai_input"
-                    ).model_dump()
+                    )
                 return embedding_service.embed(openai_input.get("input"))
             else:
                 return create_error_response(
                     f"Invalid OpenAI Route: {openai_route}"
-                ).model_dump()
+                )
         else:
             if job_input.get("input"):
                 return embedding_service.embed(job_input.get("input"))
             else:
-                return create_error_response(f"Invalid input: {job}").model_dump()
+                return create_error_response(f"Invalid input: {job}")
 
     except Exception as e:
-        return create_error_response(str(e)).model_dump()
+        return create_error_response(str(e))
 
 
 if __name__ == "__main__":

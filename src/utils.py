@@ -4,7 +4,6 @@ from http import HTTPStatus
 
 @dataclass(frozen=True)
 class ErrorResponse:
-    object: str = "error"
     message: str
     type: str
     code: int
