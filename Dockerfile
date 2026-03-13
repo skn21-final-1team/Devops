@@ -12,8 +12,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     libgl1 \
     && ln -sf /usr/bin/python3.11 /usr/bin/python \
-    && python3.11 -m ensurepip --upgrade \
-    && python3.11 -m pip install --no-cache-dir --upgrade pip
+    && ln -sf /usr/bin/pip3 /usr/bin/pip
 
 RUN pip install uv
 
