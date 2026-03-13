@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     && ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # install runtime dependencies
-RUN pip install --no-cache-dir runpod "vllm>=0.8.5"
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 # Add application files
 COPY handler.py .

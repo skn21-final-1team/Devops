@@ -6,6 +6,7 @@ Runpod serverless worker that exposes a vLLM-backed OpenAI embeddings-compatible
 
 This project is serverless-only.
 The container starts [`handler.py`](/Users/tera/Desktop/workspace/final/devops/handler.py), which boots the Runpod serverless handler.
+Runtime dependencies are declared in [`requirements.txt`](/Users/tera/Desktop/workspace/final/devops/requirements.txt) so Runpod-managed builds also install `runpod`.
 
 ## Request shape
 
