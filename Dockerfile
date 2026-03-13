@@ -6,16 +6,20 @@ ENV PYTHONPATH=/
 # install python and other packages
 RUN apt-get update && apt-get install -y \
     python3.11 \
+    python3.11-venv \
     python3-pip \
     git \
     wget \
     libgl1 \
     && ln -sf /usr/bin/python3.11 /usr/bin/python \
-    && ln -sf /usr/bin/pip3 /usr/bin/pip
+    && python3.11 -m ensurepip --upgrade \
+    && python3.11 -m pip install --no-cache-dir --upgrade pip
 
-# install runtime dependencies
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install uv
+
+# install python dependencies
+COPY requirements.txt /requirements.txt
+RUN uv pip install -r /requirements.txt --system
 
 # Add application files
 COPY handler.py .

@@ -1,2 +1,2 @@
-runpod
+runpod~=1.7.0
 vllm>=0.8.5
