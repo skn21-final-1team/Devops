@@ -2,20 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Sequence
 
 from vllm import LLM
 
 from src.config import ModelSettings
-
-
-@dataclass(frozen=True)
-class EmbeddingResult:
-    """Embedding payload produced by the model."""
-
-    vector: list[float]
-    prompt_token_count: int
+from src.contracts import EmbeddingResult
 
 
 class VllmEmbeddingService:

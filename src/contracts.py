@@ -14,6 +14,14 @@ class EmbeddingRequest:
 
 
 @dataclass(frozen=True)
+class EmbeddingResult:
+    """Embedding payload produced by the model."""
+
+    vector: list[float]
+    prompt_token_count: int
+
+
+@dataclass(frozen=True)
 class ErrorPayload:
     """OpenAI-compatible error payload."""
 

@@ -6,23 +6,24 @@ from time import time
 from typing import Sequence
 from uuid import uuid4
 
-from vllm.entrypoints.openai.protocol import (
-    EmbeddingResponse,
-    EmbeddingResponseData,
-    UsageInfo,
-)
+from src.contracts import EmbeddingResult
 
-from src.embedding_service import EmbeddingResult
+
+type EmbeddingResponseDataPayload = dict[str, int | str | list[float]]
+type EmbeddingUsagePayload = dict[str, int]
+type EmbeddingResponsePayload = dict[
+    str, str | int | EmbeddingUsagePayload | list[EmbeddingResponseDataPayload]
+]
 
 
 class OpenAIEmbeddingResponseFactory:
-    """Build OpenAI-compatible embedding responses with vLLM protocol models."""
+    """Build OpenAI-compatible embedding responses."""
 
     def create(
         self,
         model_name: str,
         embeddings: Sequence[EmbeddingResult],
-    ) -> dict[str, object]:
+    ) -> EmbeddingResponsePayload:
         """Create a successful embeddings response.
 
         Args:
@@ -33,41 +34,32 @@ class OpenAIEmbeddingResponseFactory:
             A dictionary following the OpenAI embeddings response schema.
         """
 
-        response = EmbeddingResponse(
-            id=f"embd-{uuid4().hex}",
-            object="list",
-            created=int(time()),
-            model=model_name,
-            data=[
-                EmbeddingResponseData(
-                    index=index,
-                    object="embedding",
-                    embedding=embedding.vector,
-                )
-                for index, embedding in enumerate(embeddings)
-            ],
-            usage=UsageInfo(
-                prompt_tokens=sum(
-                    embedding.prompt_token_count for embedding in embeddings
-                ),
-                total_tokens=sum(
-                    embedding.prompt_token_count for embedding in embeddings
-                ),
-            ),
+        prompt_token_count = sum(
+            embedding.prompt_token_count for embedding in embeddings
         )
-        return self._serialize(response)
+        return {
+            "id": f"embd-{uuid4().hex}",
+            "object": "list",
+            "created": int(time()),
+            "model": model_name,
+            "data": self._create_response_data(embeddings),
+            "usage": {
+                "prompt_tokens": prompt_token_count,
+                "total_tokens": prompt_token_count,
+            },
+        }
 
-    def _serialize(self, response: EmbeddingResponse) -> dict[str, object]:
-        """Serialize a protocol response across supported Pydantic versions.
+    def _create_response_data(
+        self,
+        embeddings: Sequence[EmbeddingResult],
+    ) -> list[EmbeddingResponseDataPayload]:
+        """Create the response data entries for each embedding."""
 
-        Args:
-            response: vLLM protocol response model.
-
-        Returns:
-            A plain dictionary that matches the OpenAI embeddings schema.
-        """
-
-        if hasattr(response, "model_dump"):
-            return response.model_dump()
-
-        return response.dict()
+        return [
+            {
+                "index": index,
+                "object": "embedding",
+                "embedding": embedding.vector,
+            }
+            for index, embedding in enumerate(embeddings)
+        ]
