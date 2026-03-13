@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 from time import time
-from typing import Sequence
+from typing import TypeAlias, Sequence
 from uuid import uuid4
 
 from src.contracts import EmbeddingResult
 
 
-type EmbeddingResponseDataPayload = dict[str, int | str | list[float]]
-type EmbeddingUsagePayload = dict[str, int]
-type EmbeddingResponsePayload = dict[
+EmbeddingResponseDataPayload: TypeAlias = dict[str, int | str | list[float]]
+EmbeddingUsagePayload: TypeAlias = dict[str, int]
+EmbeddingResponsePayload: TypeAlias = dict[
     str, str | int | EmbeddingUsagePayload | list[EmbeddingResponseDataPayload]
 ]
 
