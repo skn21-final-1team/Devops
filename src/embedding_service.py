@@ -1,44 +1,30 @@
 """Embedding generation through vLLM."""
 
-from __future__ import annotations
-
+from dataclasses import dataclass
 from typing import Sequence
 
 from vllm import LLM
 
-from src.config import ModelSettings
-from src.contracts import EmbeddingResult
+
+@dataclass(frozen=True)
+class EmbeddingResult:
+    vector: list[float]
+    prompt_token_count: int
 
 
 class VllmEmbeddingService:
-    """Generate embeddings using a vLLM pooling runner."""
-
-    def __init__(self, model_settings: ModelSettings) -> None:
-        """Initialize the embedding model.
-
-        Args:
-            model_settings: Model configuration to load into vLLM.
-        """
-
+    def __init__(self) -> None:
         self._llm = LLM(
-            model=model_settings.name,
+            model="Qwen/Qwen3-Embedding-8B",
+            dtype="half",
             runner="pooling",
-            dtype=model_settings.dtype,
-            trust_remote_code=model_settings.trust_remote_code,
-            max_model_len=model_settings.max_model_length,
+            enforce_eager=True,
+            trust_remote_code=True,
+            max_model_len=8192,
         )
 
-    def embed(self, texts: Sequence[str]) -> list[EmbeddingResult]:
-        """Generate embeddings for the provided texts.
-
-        Args:
-            texts: Model-ready text inputs.
-
-        Returns:
-            Embedding results in request order.
-        """
-
-        outputs = self._llm.embed(list(texts))
+    def embed(self, texts: list[str]) -> list[EmbeddingResult]:
+        outputs = self._llm.embed(texts)
         return [
             EmbeddingResult(
                 vector=list(output.outputs.embedding),
@@ -48,15 +34,6 @@ class VllmEmbeddingService:
         ]
 
     def _count_prompt_tokens(self, prompt_token_ids: Sequence[int] | None) -> int:
-        """Return the number of prompt tokens reported by vLLM.
-
-        Args:
-            prompt_token_ids: Token identifiers returned by vLLM for one prompt.
-
-        Returns:
-            The prompt token count or zero when token ids are unavailable.
-        """
-
         if prompt_token_ids is None:
             return 0
 
