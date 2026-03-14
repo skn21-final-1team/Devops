@@ -1,6 +1,6 @@
 """Embedding generation through vLLM."""
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Sequence
 
 from vllm import LLM
@@ -10,6 +10,10 @@ from vllm import LLM
 class EmbeddingResult:
     vector: list[float]
     prompt_token_count: int
+
+    def to_dict(self) -> dict[str, object]:
+        """Returns a JSON-serializable dictionary representation."""
+        return asdict(self)
 
 
 class VllmEmbeddingService:

@@ -31,14 +31,14 @@ async def async_generator_handler(job: dict[str, Any]):
                     return create_error_response(
                         "Did not specify model in openai_input"
                     )
-                return embedding_service.embed(openai_input.get("input"))
+                return [r.to_dict() for r in embedding_service.embed(openai_input.get("input"))]
             else:
                 return create_error_response(
                     f"Invalid OpenAI Route: {openai_route}"
                 )
         else:
             if job_input.get("input"):
-                return embedding_service.embed(job_input.get("input"))
+                return [r.to_dict() for r in embedding_service.embed(job_input.get("input"))]
             else:
                 return create_error_response(f"Invalid input: {job}")
 
