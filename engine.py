@@ -1,16 +1,15 @@
+import os
 import subprocess
 import time
-import requests
+
 import openai
-import asyncio
-import aiohttp
-import os
+import requests
 
 
 class SGlangEngine:
     def __init__(
         self,
-        model=os.getenv("MODEL_NAME"),
+        model="LGAI-EXAONE/EXAONE-4.0-32B",
         host=os.getenv("HOST", "0.0.0.0"),
         port=int(os.getenv("PORT", 30000)),
     ):
@@ -31,9 +30,8 @@ class SGlangEngine:
             str(self.port),
         ]
 
-        # Dictionary of all possible options and their corresponding env var names
         options = {
-            "MODEL_NAME": "--model-path",
+            "MODEL_NAME": "LGAI-EXAONE/EXAONE-4.0-32B",
             "TOKENIZER_PATH": "--tokenizer-path",
             "TOKENIZER_MODE": "--tokenizer-mode",
             "LOAD_FORMAT": "--load-format",
@@ -64,7 +62,6 @@ class SGlangEngine:
             "REASONING_PARSER": "--reasoning-parser",
         }
 
-        # Boolean flags
         boolean_flags = [
             "SKIP_TOKENIZER_INIT",
             "TRUST_REMOTE_CODE",
@@ -119,7 +116,7 @@ class OpenAIRequest:
 
     async def request_chat_completions(
         self,
-        model="default",
+        model="LGAI-EXAONE/EXAONE-4.0-32B",
         messages=None,
         max_tokens=100,
         stream=False,
@@ -155,7 +152,7 @@ class OpenAIRequest:
 
     async def request_completions(
         self,
-        model="default",
+        model="LGAI-EXAONE/EXAONE-4.0-32B",
         prompt="The capital of France is",
         max_tokens=100,
         stream=False,
